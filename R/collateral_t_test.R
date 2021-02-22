@@ -19,21 +19,11 @@
 #'
 collateral_t_test <- function(A, B, effect_type = "both", crit_type = "median",
                               criterium = NULL) {
-  # Performs T-test on vector A, which is split by a dichotomization of vector B
-  #
-  # Args:
-  #   A: MIC values antibiotic A, numeric vector
-  #   B: MIC values antibiotic B, numeric vector, same length as A
-  #   effect_type: type of collateral effect to be evaluated, string: "both", "CR" or "CS"
-  #   crit_type: type of dichotomization criterion, string: "quant", "median" or "log2_MIC"
-  #   criterium: value of dichotomization criterium, single numeric, overwritten if crit_type = "median"
-  #
-  # Returns:
-  #   List with class "htest" including statistic, parameter, p.value, etc.
 
   #Error handling
   if (length(A) != length(B)) {
-    stop("Arguments A and B have different lengths: ", length(A), " and ", length(B), ".")
+    stop("Arguments A and B have different lengths: ", length(A), " and ",
+         length(B), ".")
   }
 
   #Remove NA's
@@ -77,7 +67,8 @@ collateral_t_test <- function(A, B, effect_type = "both", crit_type = "median",
   }
 
   #Perform t.test
-  A_t_test <- stats::t.test(A_Bhigh, A_Blow, var.equal = TRUE, alternative = direction)
+  A_t_test <- stats::t.test(A_Bhigh, A_Blow, var.equal = TRUE,
+                            alternative = direction)
 
   #Adjust names of groups
   names(A_t_test$estimate) <- c("mean of A|B = high", "mean of A|B = low")

@@ -7,7 +7,10 @@ Authors@R:
            role = c("aut", "cre"),
            email = "l.b.zwep@lacdr.leidenuniv.nl",
            comment = c(ORCID = "0000-0002-6817-2859"))
-Description: Test collateral effects in surveillance antibiotics date. Uses method described by Zwep et al. 2021 (in preparation), to calculate log2 fold change between to antibtiocs, based on their MIC, and tests whether the effect is significant.
+Description: Test collateral effects in surveillance antibiotics date. Uses 
+    method described by Zwep et al. 2021 (in preparation), to calculate log2 
+    fold change between to antibtiocs, based on their MIC, and tests whether the
+    effect is significant.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
