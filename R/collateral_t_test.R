@@ -1,11 +1,30 @@
-collateral_t_test <- function(A, B, CE_type = "both", crit_type = "median",
+#' Test Collateral Effect
+#'
+#' Take MIC values of two antibiotics and quantify and test their collateral effect. The quantified effect is the effect of B on A.
+#'
+#' @param A MIC values of antibiotic A, numeric vector
+#' @param B MIC values of antibiotic B, numeric vector, same length as A
+#' @param effect_type type of collateral effect to be evaluated, string: `"both"`, `"CR"` or `"CS"`
+#' @param crit_type type of dichotomization criterion, string: `"quant"`, `"median"` or `"log2_MIC"`
+#' @param criterium value of dichotomization criterium, numeric value (is overwritten by `crit_type = "median"`)
+#'
+#' @return List with class `htest` including statistic, parameter, p.value, etc.
+#'
+#' @export
+#'
+#' @examples
+#' A <- c(16, 16, 128, 128, 32, 16, 128, 1, 64, 1)
+#' B <- c(32, 32, 16, 32, 8, 32, 8, 8, 8, 8)
+#' collateral_t_test(A, B)
+#'
+collateral_t_test <- function(A, B, effect_type = "both", crit_type = "median",
                               criterium = NULL) {
   # Performs T-test on vector A, which is split by a dichotomization of vector B
   #
   # Args:
   #   A: MIC values antibiotic A, numeric vector
-  #   B: MIC values antibiotic B, numeric vecter, same length as A
-  #   CE_type: type of collateral effect to be evaluated, string: "both", "CR" or "CS"
+  #   B: MIC values antibiotic B, numeric vector, same length as A
+  #   effect_type: type of collateral effect to be evaluated, string: "both", "CR" or "CS"
   #   crit_type: type of dichotomization criterion, string: "quant", "median" or "log2_MIC"
   #   criterium: value of dichotomization criterium, single numeric, overwritten if crit_type = "median"
   #
@@ -22,12 +41,12 @@ collateral_t_test <- function(A, B, CE_type = "both", crit_type = "median",
   A <- log2(A[!ind_na])
   B <- log2(B[!ind_na])
 
-  #Translate CE_type to t-test direction
-  direction <- c("two.sided", "less", "greater")[c("both", "CS", "CR") == CE_type]
+  #Translate effect_type to t-test direction
+  direction <- c("two.sided", "less", "greater")[c("both", "CS", "CR") == effect_type]
 
   #Calculate dichotomization criterium tau based on criterium type
   if (crit_type == "quant") {
-    tau <- quantile(B, criterium)
+    tau <- stats::quantile(B, criterium)
 
   } else if (crit_type == "median") {
 
