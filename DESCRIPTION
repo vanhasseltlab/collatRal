@@ -1,15 +1,14 @@
 Package: collateRal
-Title: What the Package Does (One Line, Title Case)
+Title: Test Collateral Effects in Surveillance Antibiotics Data
 Version: 0.0.0.9000
 Authors@R: 
-    person(given = "First",
-           family = "Last",
+    person(given = "Laura Bertien",
+           family = "Zwep",
            role = c("aut", "cre"),
-           email = "first.last@example.com",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to
-    pick a license
+           email = "l.b.zwep@lacdr.leidenuniv.nl",
+           comment = c(ORCID = "0000-0002-6817-2859"))
+Description: Test collateral effects in surveillance antibiotics date. Uses method described by Zwep et al. 2021 (in preparation), to calculate log2 fold change between to antibtiocs, based on their MIC, and tests whether the effect is significant.
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
