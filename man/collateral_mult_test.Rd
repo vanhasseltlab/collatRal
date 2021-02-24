@@ -24,6 +24,9 @@ antibiotics (cols, with corresponding colnames)}
 
 \item{criterium}{value of dichotomization criterium, numeric value (is
 overwritten by \code{crit_type = "median"})}
+
+\item{MTC_method}{multiple testing correction method (see
+\code{?stats::p.adjust.methods})}
 }
 \value{
 data frame with results per antibiotic combination
@@ -31,4 +34,11 @@ data frame with results per antibiotic combination
 \description{
 Wrapper for \code{collateral_t_test()}, which quantifies and tests collateral
 effects in a set of MICs for more than two antibiotics.
+}
+\examples{
+
+MIC_test <- data.frame(d1 = c(16, 16, 128, 128, 32, 16, 128, 1, 64, 1),
+d2 = c(32, 32, 16, 32, 8, 32, 8, 8, 8, 8),
+d3 = c(8, 64, 64, 64, 16, 6, 16, 8, 8, 8))
+collateral_mult_test(MIC_test)
 }

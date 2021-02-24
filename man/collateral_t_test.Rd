@@ -9,7 +9,8 @@ collateral_t_test(
   B,
   effect_type = "both",
   crit_type = "median",
-  criterium = NULL
+  criterium = NULL,
+  warn = TRUE
 )
 }
 \arguments{
@@ -17,17 +18,24 @@ collateral_t_test(
 
 \item{B}{MIC values of antibiotic B, numeric vector, same length as A}
 
-\item{effect_type}{type of collateral effect to be evaluated, string: \code{"both"}, \code{"CR"} or \code{"CS"}}
+\item{effect_type}{type of collateral effect to be evaluated, string:
+\code{"both"}, \code{"CR"} or \code{"CS"}}
 
-\item{crit_type}{type of dichotomization criterion, string: \code{"quant"}, \code{"median"} or \code{"log2_MIC"}}
+\item{crit_type}{type of dichotomization criterion, string: \code{"quant"},
+\code{"median"} or \code{"log2_MIC"}}
 
-\item{criterium}{value of dichotomization criterium, numeric value (is overwritten by \code{crit_type = "median"})}
+\item{criterium}{value of dichotomization criterium, numeric value (is
+overwritten by \code{crit_type = "median"})}
+
+\item{warn}{set true to give warning when number of observations is too low
+for the test.}
 }
 \value{
 List with class \code{htest} including statistic, parameter, p.value, etc.
 }
 \description{
-Take MIC values of two antibiotics and quantify and test their collateral effect. The quantified effect is the effect of B on A.
+Take MIC values of two antibiotics and quantify and test their collateral
+effect. The quantified effect is the effect of B on A.
 }
 \examples{
 A <- c(16, 16, 128, 128, 32, 16, 128, 1, 64, 1)

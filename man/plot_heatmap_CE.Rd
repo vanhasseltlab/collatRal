@@ -6,18 +6,32 @@
 \usage{
 plot_heatmap_CE(
   t_result,
-  FDR_crit = 0.15,
-  species,
-  selectedAB = NULL,
+  sign_criterium = 1,
+  selected_ab = NULL,
   t_or_effect = "effect"
 )
 }
 \arguments{
-\item{t_or_effect}{}
+\item{t_result}{T test results from wrapper function (to be developed)}
+
+\item{sign_criterium}{the criterium for which of results are considered
+significant}
+
+\item{selected_ab}{optional argument, character vector containing which antibiotics should be included}
+
+\item{t_or_effect}{plot the effect size or the T value, character \code{"t"} or \code{"effect"}}
 }
 \value{
-
+ggplot object
 }
 \description{
-Plot Heatmap of Collateral Effects
+WORK IN PROGRESS
+}
+\examples{
+MIC_test <- data.frame(d1 = c(16, 16, 128, 128, 32, 16, 128, 1, 64, 1),
+                       d2 = c(32, 32, 16, 32, 8, 32, 8, 8, 8, 8),
+                       d3 = c(8, 64, 64, 64, 16, 6, 16, 8, 8, 8))
+MIC_test_result <- collateral_mult_test(MIC_test)
+plot_heatmap_CE(MIC_test_result)
+
 }
