@@ -1,12 +1,18 @@
 #' Test Collateral Effect
 #'
-#' Take MIC values of two antibiotics and quantify and test their collateral effect. The quantified effect is the effect of B on A.
+#' Take MIC values of two antibiotics and quantify and test their collateral
+#' effect. The quantified effect is the effect of B on A.
 #'
 #' @param A MIC values of antibiotic A, numeric vector
 #' @param B MIC values of antibiotic B, numeric vector, same length as A
-#' @param effect_type type of collateral effect to be evaluated, string: `"both"`, `"CR"` or `"CS"`
-#' @param crit_type type of dichotomization criterion, string: `"quant"`, `"median"` or `"log2_MIC"`
-#' @param criterium value of dichotomization criterium, numeric value (is overwritten by `crit_type = "median"`)
+#' @param effect_type type of collateral effect to be evaluated, string:
+#' `"both"`, `"CR"` or `"CS"`
+#' @param crit_type type of dichotomization criterion, string: `"quant"`,
+#' `"median"` or `"log2_MIC"`
+#' @param criterium value of dichotomization criterium, numeric value (is
+#' overwritten by `crit_type = "median"`)
+#' @param warn set true to give warning when number of observations is too low
+#' for the test.
 #'
 #' @return List with class `htest` including statistic, parameter, p.value, etc.
 #'
@@ -18,7 +24,7 @@
 #' collateral_t_test(A, B)
 #'
 collateral_t_test <- function(A, B, effect_type = "both", crit_type = "median",
-                              criterium = NULL) {
+                              criterium = NULL, warn = TRUE) {
 
   #Error handling
   if (length(A) != length(B)) {
@@ -32,7 +38,13 @@ collateral_t_test <- function(A, B, effect_type = "both", crit_type = "median",
   B <- log2(B[!ind_na])
 
   #Translate effect_type to t-test direction
-  direction <- c("two.sided", "less", "greater")[c("both", "CS", "CR") == effect_type]
+  effect_types <- c("both", "CS", "CR")
+  #Error handling
+  if (!effect_type %in% effect_types) {
+    warning("Argument effect_type is not a valid input, defaults to \"both\"")
+    effect_type <- "both"
+  }
+  direction <- c("two.sided", "less", "greater")[effect_types == effect_type]
 
   #Calculate dichotomization criterium tau based on criterium type
   if (crit_type == "quant") {
@@ -52,7 +64,8 @@ collateral_t_test <- function(A, B, effect_type = "both", crit_type = "median",
   } else {
     tau <- criterium
     if (!crit_type %in% c("quant", "median", "log2_MIC")) {
-      warning("crit_type is not specified (correctly), defaults to \"log2_MIC\"")
+      warning("crit_type is not specified (correctly), defaults to ",
+              "\"log2_MIC\"")
     }
   }
 
@@ -61,7 +74,9 @@ collateral_t_test <- function(A, B, effect_type = "both", crit_type = "median",
 
   #Error handling
   if (length(A_Blow) < 2 | length(A_Bhigh) < 2) {
-    warning("Not enough observations for test! Returning list with limited information. Try different dichotomization criterium for test.")
+    if (warn) {
+      warning("Not enough observations for test! Returning list with limited information. Try different dichotomization criterium for test.")
+    }
     return(list(A = A, B = B, tau = tau, data = list(`A|B = r` = A_Bhigh,
                                                      `A|B != r` = A_Blow)))
   }
