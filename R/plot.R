@@ -69,10 +69,10 @@ plot_heatmap_CE <- function(t_result, sign_criterium = 1, selected_ab = NULL,
     seq(1.5, length(unique(x)) - 0.5, 1)
   }
 
-  #define variables in environment to circumvent building errors
+  # Define variables in environment to circumvent building errors
   A <- B <- effect_size <- reciprocal <- NULL
 
-  #make ggplot
+  # Make plot
   plot_ <- ggplot2::ggplot(t_result, ggplot2::aes(x = B, y = A)) +
     # Add plot layers
     ggplot2::geom_tile(ggplot2::aes(fill = effect_size)) +
@@ -110,17 +110,9 @@ plot_heatmap_CE <- function(t_result, sign_criterium = 1, selected_ab = NULL,
 #'
 #' WORK IN PROGRESS
 #'
-#' @param MIC_clean MIC data frame (rows = strains, cols = AB)
-#' @param results T test results from wrapper function (currently still needed)
-#' @param t_rank in the `results` outcome, which ranking value should be plotted (overwritten by whichAB)
-#' @param one_direction plot only A on B  (TRUE) or also plot B on A (FALSE)
-#' @param CResponse direction of response either collateral sensitivity (CS) or resistance (CR)
-#' @param sign_criterium the criterium for which of results are considered significant
-#' @param whichAB pair of antibiotics (names string) you want to plot
-#' @param colours pair or colors for B = high and B = low groups
-#' @param separate_plots if one_direction = TRUE, whether you want to return two separate plots (in list) or one plot (grid.arrange)
-#' @param ran range of MIC values plotted
-#' @param t_or_effect Want to plot the highest ranking effect or T value?
+#' @param MIC_range range of x-axis (default NULL)
+#' @param colors set of two colors for the high and low MIC groups
+#' @inheritParams collateral_t_test
 #'
 #' @return (list with) ggplot object(s) or grid.arrange output
 #' @export
@@ -130,147 +122,79 @@ plot_heatmap_CE <- function(t_result, sign_criterium = 1, selected_ab = NULL,
 #'                        d2 = c(32, 32, 16, 32, 8, 32, 8, 8, 8, 8),
 #'                        d3 = c(8, 64, 64, 64, 16, 6, 16, 8, 8, 8))
 #' MIC_test_result <- collateral_mult_test(MIC_test)
-#' plot_histogram_CE(MIC_test, MIC_test_result)
+#' plot_histogram_CE(MIC_test$d1, MIC_test$d2)
 #'
 #'
-#TO-DO: reduce to base and ggplot, remove most arguments, only include an AB pair
-plot_histogram_CE <- function(MIC_clean, results, t_rank = 1,
-                              one_direction = TRUE, CResponse = "CS", sign_criterium = 0.15, whichAB = NULL,
-                              colours = c("#283c82", "#F46B2D"), separate_plots = NULL, ran = NULL,
-                              t_or_effect = "t") {
-  return(NULL)
-#
-#   if (!is.null(whichAB)) {
-#     comb <- whichAB
-#     sign_dat <- results %>%
-#       filter(A == comb[1] & B == comb[2])
-#     row.names(sign_dat) <- paste0(sign_dat$A, sign_dat$B)
-#     if (whichAB[1] %in% sign_dat$A & whichAB[2] %in% sign_dat$B) {
-#       d <- sign_dat[paste0(comb, collapse = ""), "tau"]
-#     } else {
-#       message("Specified antibiotics are not in data, using highest effect size")
-#       whichAB <- NULL
-#     }
-#   }
-#
-#
-#   if (is.null(whichAB)) {
-#     if (t_or_effect == "effect"){
-#       results$t <- results$effect_size
-#     }
-#
-#     sign_dat <- results %>%
-#       filter(p_BY < sign_criterium & (sign(t) == c(-1, 1)[CResponse == c("CS", "CR")])) %>%
-#       arrange(desc(abs(t)))
-#     row.names(sign_dat) <- paste0(sign_dat$A, sign_dat$B)
-#
-#     if (nrow(sign_dat) < 1) {
-#       message("No significant ", CResponse, " effect, plotting non significant finding with largest T")
-#       if (CResponse == "CS") {
-#         sign_dat <- results %>%
-#           arrange(t) %>%
-#           slice(1)
-#       } else {
-#         sign_dat <- results %>%
-#           arrange(desc(t)) %>%
-#           slice(1)
-#       }
-#       t_rank <- 1
-#     }
-#
-#     if (nrow(sign_dat) < t_rank) {
-#       message(paste0("No", t_rank, "th significant ", CResponse, " effect, plotting significant finding with largest T"))
-#       t_rank <- 1
-#     }
-#     comb <- unlist(sign_dat[t_rank, 1:2])
-#     d <- sign_dat[t_rank, "tau"]
-#   }
-#
-#
-#
-#   #for all combinations?
-#   dat <- log2(MIC_clean[, comb])
-#   dat <- dat[!is.na(dat[, 1]) & !is.na(dat[, 2]), ]
-#   names(dat) <- c("A", "B")
-#
-#   dat$Condition <- as.factor(ifelse(dat$B >= d,
-#                                     paste0(comb[1],"|", comb[2]," > ", round(d, 2)),
-#                                     paste0(comb[1],"|", comb[2]," < ", round(d, 2))))
-#   means <- data.frame(mean = c(mean(dat$A[dat$B < d]), mean(dat$A[dat$B >= d])),
-#                       Means = sort((unique(dat$Condition))))
-#   change_range <- FALSE
-#   if (is.null(ran)){
-#     ran <- range(dat$A) + (0.5 * c(-1, + 1))
-#     change_range <- TRUE
-#   }
-#   ticks <- floor(seq(ran[1], ran[2] + 2))
-#
-#   plotPanel <- function(dat) {
-#
-#     plotje <- dat %>%
-#       ggplot(aes(x = A, y = ..count.., group = Condition, fill = Condition)) +
-#       geom_bar(stat = "count", width = 0.6, position = "stack") +
-#       labs(x = bquote(log[2]*"(MIC) " ~ .(comb[1])), y = "Counts") +
-#       #labs(x = expression(log[2]*"(MIC) "*comb[1]), y = "Counts") +
-#       #scale_y_continuous(expand = expansion(mult = c(0, .05)), labels = function(x) sprintf("%.2f", x)) +
-#       scale_y_continuous(expand = expansion(mult = c(0, .05))) +
-#       scale_x_continuous(breaks = ticks, limits = ran) +
-#       geom_vline(data = means, aes(xintercept = mean), colour = "white") +
-#       geom_vline(data = means, aes(xintercept = mean, colour = Means), show.legend  = TRUE, linetype = 2) +
-#       scale_fill_manual(values = colours) +
-#       scale_colour_manual(labels = c(bquote(hat(mu)[.(as.character(means$Means[1]))]),
-#                                      #                               bquote(paste(hat(mu)[paste(comb[1], "|", comb[2],>=, d)]))),
-#                                      bquote(hat(mu)[.(as.character(means$Means[2]))])),
-#                           values = colours) +
-#       theme_bw() +
-#       theme(panel.grid.minor.x = element_blank(), panel.grid.major.x = element_blank(), legend.position = "bottom",
-#             #     legend.background = element_rect(fill = "transparent", size = 0.5, linetype = "solid", colour = "black"),
-#             legend.box = "horizontal", legend.direction = "vertical",
-#             legend.margin = margin(0,0,0,0),
-#             legend.box.margin = margin(-15,0,0,0),
-#             legend.background = element_blank()) +
-#       guides(fill = guide_legend(override.aes = list(linetype = 0), order = 1, title = NULL),
-#              colour = guide_legend(order = 2, title = NULL, label.theme = element_text(size = 12)))
-#
-#
-#     return(plotje)
-#   }
-#
-#
-#   p_A <- plotPanel(dat)
-#
-#   if (one_direction) {
-#     return(p_A)
-#   }
-#
-#   new_dat <- results
-#   rownames(new_dat) <- paste(new_dat$A, new_dat$B, sep = "_")
-#   comb <- comb[2:1]
-#   d <- new_dat[paste(comb, collapse = "_"), "tau"]
-#   dat <- log2(MIC_clean[, comb])
-#   dat <- dat[!is.na(dat[, 1]) & !is.na(dat[, 2]), ]
-#   names(dat) <- c("A", "B")
-#   d_min <- max(dat$B[dat$B < d], na.rm = T)
-#
-#   dat$Condition <- as.factor(ifelse(dat$B >= d,
-#                                     paste0(comb[1],"|", comb[2]," > ", round(d, 2)),
-#                                     paste0(comb[1],"|", comb[2]," < ", round(d, 2))))
-#   means <- data.frame(mean = c(mean(dat$A[dat$B < d]), mean(dat$A[dat$B >= d])),
-#                       Means = sort((unique(dat$Condition))))
-#
-#   if (change_range == TRUE){
-#     ran <- range(dat$A) + (0.5 * c(-1, + 1))
-#   }
-#   ticks <- floor(seq(ran[1], ran[2] + 2))
-#   p_B <- plotPanel(dat)
-#
-#
-#
-#   if (is.null(separate_plots)) {
-#     p_A <- p_A + theme(axis.title.y = element_blank())
-#     p_B <- p_B + theme(axis.title.y = element_blank())
-#     return(grid.arrange(p_A, p_B, ncol = 2, left = textGrob("Counts", hjust = -0.45, rot = 90)))
-#   } else {
-#     return(list(p_A, p_B + ylab("  ")))
-#   }
+plot_histogram_CE <- function(A, B, effect_type = "both", crit_type = "median",
+                              criterium = NULL, MIC_range = NULL,
+                              colors = c("#BFC6B8", "#4A5242")) {
+  # Perform t-test to determine tau and the means
+  t_result <- collateral_t_test(A, B, effect_type = effect_type,
+                                crit_type = crit_type, criterium = criterium,
+                                warn = FALSE)
+  d <- t_result$tau
+
+  antibiotics <- c(deparse(substitute(A)), deparse(substitute(B)))
+  # Remove data.frame name if input includes '$' sign.
+  antibiotics <- ifelse(grepl("$", antibiotics, fixed = T),
+                        gsub(".*\\$","",antibiotics), antibiotics)
+
+
+  plot_data <- data.frame(A = log2(A), B = log2(B))
+
+
+  plot_data$Condition <- as.factor(ifelse(plot_data$B >= d,
+    paste0(antibiotics[1],"|", antibiotics[2]," > ", round(d, 2)),
+    paste0(antibiotics[1],"|", antibiotics[2]," < ", round(d, 2))))
+
+
+  means <- data.frame(Means = sort(unique(plot_data$Condition)),
+                      mean = t_result$estimate[2:1])
+  # Define variables in environment to circumvent building errors
+  Means <- Condition <- ..count.. <-  NULL
+
+  if (is.null(MIC_range)) {
+    MIC_range <- range(plot_data$A) + (0.5 * c(-1, + 1))
+  }
+  ticks <- floor(seq(MIC_range[1], MIC_range[2] + 2))
+  labeling <- c(bquote(hat(mu)[.(as.character(means$Means[1]))]),
+                bquote(hat(mu)[.(as.character(means$Means[2]))]))
+
+  histogram <- ggplot2::ggplot(plot_data,
+                               ggplot2::aes(x = A, y = ..count..,
+                                            group = Condition,
+                                            fill = Condition)) +
+    # Add plot layers
+    ggplot2::geom_bar(stat = "count", width = 0.6, position = "stack") +
+    ggplot2::geom_vline(data = means, ggplot2::aes(xintercept = mean),
+                        color = "white") +
+    ggplot2::geom_vline(data = means, linetype = 2,
+                        ggplot2::aes(xintercept = mean, color = Means)) +
+    ggplot2::labs(x = bquote(log[2]*"(MIC) " ~ .(antibiotics[1])),
+                  y = "Counts") +
+    # Scale aesthetics
+    ggplot2::scale_y_continuous(expand = ggplot2::expansion(mult = c(0, .05))) +
+    ggplot2::scale_x_continuous(breaks = ticks, limits = MIC_range) +
+    ggplot2::scale_fill_manual(values = colors) +
+    ggplot2::scale_colour_manual(labels = labeling, values = colors) +
+
+    # Change theme
+    ggplot2::theme_bw() +
+    ggplot2::theme(
+      panel.grid.minor.x = ggplot2::element_blank(),
+      panel.grid.major.x = ggplot2::element_blank(),
+      legend.position = "bottom",
+      legend.box = "horizontal", legend.direction = "vertical",
+      legend.margin = ggplot2::margin(0,0,0,0),
+      legend.box.margin = ggplot2::margin(-15,0,0,0),
+      legend.background = ggplot2::element_blank()
+    ) +
+    ggplot2::guides(
+      fill = ggplot2::guide_legend(override.aes = list(linetype = 0), order = 1,
+                                   title = NULL),
+      color = ggplot2::guide_legend(order = 2, title = NULL,
+                                     label.theme = ggplot2::element_text(size = 12))
+      )
+
+  return(histogram)
 }

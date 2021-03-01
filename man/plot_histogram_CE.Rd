@@ -5,45 +5,45 @@
 \title{Plot MIC Distribution}
 \usage{
 plot_histogram_CE(
-  MIC_clean,
-  results,
-  t_rank = 1,
-  one_direction = TRUE,
-  CResponse = "CS",
-  FDR_crit = 0.15,
-  whichAB = NULL,
-  colours = c("#283c82", "#F46B2D"),
-  separate_plots = NULL,
-  ran = NULL,
-  t_or_effect = "t"
+  A,
+  B,
+  effect_type = "both",
+  crit_type = "median",
+  criterium = NULL,
+  MIC_range = NULL,
+  colors = c("#BFC6B8", "#4A5242")
 )
 }
 \arguments{
-\item{MIC_clean}{MIC data frame (rows = strains, cols = AB)}
+\item{A}{MIC values of antibiotic A, numeric vector}
 
-\item{results}{T test results from wrapper function (currently still needed)}
+\item{B}{MIC values of antibiotic B, numeric vector, same length as A}
 
-\item{t_rank}{in the \code{results} outcome, which ranking value should be plotted (overwritten by whichAB)}
+\item{effect_type}{type of collateral effect to be evaluated, string:
+\code{"both"}, \code{"CR"} or \code{"CS"}}
 
-\item{one_direction}{plot only A on B  (TRUE) or also plot B on A (FALSE)}
+\item{crit_type}{type of dichotomization criterion, string: \code{"quant"},
+\code{"median"} or \code{"log2_MIC"}}
 
-\item{CResponse}{direction of response either collateral sensitivity (CS) or resistance (CR)}
+\item{criterium}{value of dichotomization criterium, numeric value (is
+overwritten by \code{crit_type = "median"})}
 
-\item{FDR_crit}{the criterium for which of results are considered significant}
+\item{MIC_range}{range of x-axis (default NULL)}
 
-\item{whichAB}{pair of antibiotics (names string) you want to plot}
-
-\item{colours}{pair or colors for B = high and B = low groups}
-
-\item{separate_plots}{if one_direction = TRUE, whether you want to return two separate plots (in list) or one plot (grid.arrange)}
-
-\item{ran}{range of MIC values plotted}
-
-\item{t_or_effect}{}
+\item{colors}{set of two colors for the high and low MIC groups}
 }
 \value{
-
+(list with) ggplot object(s) or grid.arrange output
 }
 \description{
-Plot MIC Distribution
+WORK IN PROGRESS
+}
+\examples{
+MIC_test <- data.frame(d1 = c(16, 16, 128, 128, 32, 16, 128, 1, 64, 1),
+                       d2 = c(32, 32, 16, 32, 8, 32, 8, 8, 8, 8),
+                       d3 = c(8, 64, 64, 64, 16, 6, 16, 8, 8, 8))
+MIC_test_result <- collateral_mult_test(MIC_test)
+plot_histogram_CE(MIC_test$d1, MIC_test$d2)
+
+
 }

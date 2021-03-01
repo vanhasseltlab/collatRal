@@ -15,7 +15,7 @@ plot_heatmap_CE(
 \item{t_result}{T test results from wrapper function (to be developed)}
 
 \item{sign_criterium}{the criterium for which of results are considered
-significant}
+significant, numeric value in (0, 1].}
 
 \item{selected_ab}{optional argument, character vector containing which antibiotics should be included}
 
@@ -25,7 +25,8 @@ significant}
 ggplot object
 }
 \description{
-WORK IN PROGRESS
+Plot heatmap of T-values or effect sizes for results from
+\code{collateral_mult_test}.
 }
 \examples{
 MIC_test <- data.frame(d1 = c(16, 16, 128, 128, 32, 16, 128, 1, 64, 1),
