@@ -139,6 +139,9 @@ plot_histogram_CE <- function(A, B, effect_type = "both", crit_type = "median",
   antibiotics <- ifelse(grepl("$", antibiotics, fixed = T),
                         gsub(".*\\$","",antibiotics), antibiotics)
 
+  ind_na <- is.na(A) | is.na(B)
+  A <- A[!ind_na]
+  B <- B[!ind_na]
 
   plot_data <- data.frame(A = log2(A), B = log2(B))
 
