@@ -33,8 +33,11 @@ plot_heatmap_CE <- function(t_result, sign_criterium = 1, selected_ab = NULL,
   }
 
   #Set all non significant finding to zero (white in plot)
-  not_significant <- with(t_result, ifelse(is.null(q), p > sign_criterium,
-                                                       q > sign_criterium))
+  if (is.null(t_result$q)) {
+    not_significant <- t_result$p > sign_criterium
+  } else {
+    not_significant <- t_result$q > sign_criterium
+  }
   t_result$effect_size[not_significant] <- 0
 
 
@@ -49,7 +52,8 @@ plot_heatmap_CE <- function(t_result, sign_criterium = 1, selected_ab = NULL,
       t_result[ind_comb, "reciprocal"] <- "reciprocal"
     }
   }
-  levels(t_result$reciprocal) <- c("one-directional", "reciprocal")
+  t_result$reciprocal <- factor(t_result$reciprocal,
+                                levels = c("one-directional", "reciprocal"))
 
   #Use only antibiotics from selected_ab argument
   if (!is.null(selected_ab)) {
