@@ -32,8 +32,8 @@ collateral_t_test <- function(A, B, effect_type = "both", crit_type = "median",
          length(B), ".")
   }
 
-  #Remove NA's
-  ind_na <- is.na(A) | is.na(B)
+  #Remove NA's and zero values
+  ind_na <- is.na(A) | is.na(B) | A == 0 | B == 0
   A <- log2(A[!ind_na])
   B <- log2(B[!ind_na])
 
@@ -73,12 +73,14 @@ collateral_t_test <- function(A, B, effect_type = "both", crit_type = "median",
   A_Bhigh <- A[B >= tau]
 
   #Error handling
-  if (length(A_Blow) < 2 | length(A_Bhigh) < 2) {
+  if (length(unique(A_Blow)) < 2 | length(unique(A_Bhigh)) < 2) {
     if (warn) {
-      warning("Not enough observations for test! Returning list with limited information. Try different dichotomization criterium for test.")
+      warning("Not enough observations (or variation in observations) for ",
+              "test! Returning list with limited information. Try different",
+              "dichotomization criterium for test.")
     }
-    return(list(A = A, B = B, tau = tau, data = list(`A|B = r` = A_Bhigh,
-                                                     `A|B != r` = A_Blow)))
+    return(list(A = A, B = B, tau = tau, data = list(`A|B = high` = A_Bhigh,
+                                                     `A|B = low` = A_Blow)))
   }
 
   #Perform t.test
