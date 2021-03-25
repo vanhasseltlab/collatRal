@@ -62,13 +62,13 @@ plot_heatmap_CE <- function(t_result, sign_criterium = 1, selected_ab = NULL,
   }
 
   #define plot colors, limits and labels
-  blues <- c("#283C82", "#2F4286", "#36498A", "#3E508E", "#455693", "#4D5D97",
-             "#54649B", "#5B6BA0", "#6371A4", "#6A78A8", "#727FAD", "#8893BA",
-             "#9EA7C6", "#B4BBD3", "#CBCFE0", "#E1E4ED", "#F7F8FA")
+  blues <- c("#182450", "#243676", "#283C82", "#2F4286", "#36498A", "#3E508E",
+             "#455693", "#4D5D97", "#54649B", "#5B6BA0", "#6371A4", "#6A78A8",
+             "#727FAD", "#8893BA", "#9EA7C6", "#CBCFE0")
   oranges <- c("#F54C00", "#F55208", "#F55811", "#F65E1A", "#F66423", "#F66A2B",
                "#F77134", "#F7773D", "#F77D46", "#F8834F", "#F88957", "#F99C72",
-               "#FAAE8C", "#FBC1A7", "#FCD3C1", "#FDE6DB", "#FEF8F6")
-  limits <- c(-1, 1) * max(t_result$effect_size)
+               "#FAAE8C", "#FBC1A7", "#FCD3C1", "#FDE6DB")
+  limits <- c(-1, 1) * max(abs(t_result$effect_size))
   draw_grid <- function(x) {
     seq(1.5, length(unique(x)) - 0.5, 1)
   }
@@ -90,7 +90,6 @@ plot_heatmap_CE <- function(t_result, sign_criterium = 1, selected_ab = NULL,
     ggplot2::scale_fill_gradientn(colours = c(blues, "white", rev(oranges)),
                                   limits = limits) +
     ggplot2::scale_shape_manual(values = c("", "\u2194"), drop = FALSE) +
-    ggplot2::coord_fixed() +
     ggplot2::labs(x = "Splitting antibiotic (B)",
                   y = paste0("Testing antibiotic (A)"),
                   fill = effect_label, shape = "") +
@@ -105,7 +104,10 @@ plot_heatmap_CE <- function(t_result, sign_criterium = 1, selected_ab = NULL,
                    legend.title = ggplot2::element_text(size = 12),
                    legend.key = ggplot2::element_rect(fill = "grey60"),
                    axis.title = ggplot2::element_text(size = 14),
-                   axis.text.x = ggplot2::element_text(angle = 90))
+                   axis.text.x = ggplot2::element_text(angle = 90, hjust = 1,
+                                                       vjust = 0.5),
+                   aspect.ratio = 1) #+
+    #ggplot2::facet_grid(class_A ~ class_B, drop = TRUE, scales = "free")
 
   return(plot_)
 }
