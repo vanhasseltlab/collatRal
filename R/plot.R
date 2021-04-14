@@ -107,7 +107,7 @@ plot_heatmap_CE <- function(t_result, sign_criterium = 1, selected_ab = NULL,
                    axis.text.x = ggplot2::element_text(angle = 90, hjust = 1,
                                                        vjust = 0.5),
                    aspect.ratio = 1) #+
-    #ggplot2::facet_grid(class_A ~ class_B, drop = TRUE, scales = "free")
+    # ggplot2::facet_grid(class_A ~ class_B, drop = TRUE, scales = "free")
 
   return(plot_)
 }
@@ -153,9 +153,8 @@ plot_histogram_CE <- function(A, B, effect_type = "both", crit_type = "median",
 
 
   plot_data$Condition <- as.factor(ifelse(plot_data$B >= d,
-    paste0(antibiotics[1],"|", antibiotics[2]," > ", round(d, 2)),
+    paste0(antibiotics[1],"|", antibiotics[2],"	 \u2265 ", round(d, 2)),
     paste0(antibiotics[1],"|", antibiotics[2]," < ", round(d, 2))))
-
 
   means <- data.frame(Means = sort(unique(plot_data$Condition)),
                       mean = t_result$estimate[2:1])
@@ -165,9 +164,12 @@ plot_histogram_CE <- function(A, B, effect_type = "both", crit_type = "median",
   if (is.null(MIC_range)) {
     MIC_range <- range(plot_data$A) + (0.5 * c(-1, + 1))
   }
+
   ticks <- floor(seq(MIC_range[1], MIC_range[2] + 2))
   labeling <- c(bquote(hat(mu)[.(as.character(means$Means[1]))]),
-                bquote(hat(mu)[.(as.character(means$Means[2]))]))
+                bquote(hat(mu)[.(antibiotics[1])*"|"*
+                                 .(paste0(antibiotics[2], " ")) >=
+                                 .(paste0(" ", d))]))
 
   histogram <- ggplot2::ggplot(plot_data,
                                ggplot2::aes(x = A, y = ..count..,

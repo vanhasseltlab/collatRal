@@ -55,10 +55,8 @@ collateral_t_test <- function(A, B, effect_type = "both", crit_type = "median",
     tau <- stats::quantile(B, 0.5)
     B_values <- sort(unique(B))
     #Adjust tau to create most equal split
-    if (sum(B > tau) < sum(B < tau)) {
-      tau <- mean(c(B_values[which(B_values == tau) - 1], tau))
-    } else if (sum(B > tau) > sum(B < tau)) {
-      tau <- mean(c(B_values[which(B_values == tau) + 1], tau))
+    if (sum(B > tau) > sum(B < tau)) {
+      tau <- B_values[which(B_values == tau) + 1]
     }
 
   } else {
