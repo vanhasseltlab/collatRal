@@ -22,7 +22,7 @@ significant, numeric value in (0, 1].}
 \item{t_or_effect}{plot the effect size or the T value, character \code{"t"} or \code{"effect"}}
 }
 \value{
-ggplot object
+ggplot object with heatmap
 }
 \description{
 Plot heatmap of T-values or effect sizes for results from

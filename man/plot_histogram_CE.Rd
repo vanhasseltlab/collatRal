@@ -15,9 +15,9 @@ plot_histogram_CE(
 )
 }
 \arguments{
-\item{A}{MIC values of antibiotic A, numeric vector}
+\item{A}{Untransformed MIC values of antibiotic A, numeric vector}
 
-\item{B}{MIC values of antibiotic B, numeric vector, same length as A}
+\item{B}{Untransformed MIC values of antibiotic B, numeric vector, same length as A}
 
 \item{effect_type}{type of collateral effect to be evaluated, string:
 \code{"both"}, \code{"CR"} or \code{"CS"}}
@@ -33,10 +33,10 @@ overwritten by \code{crit_type = "median"})}
 \item{colors}{set of two colors for the high and low MIC groups}
 }
 \value{
-(list with) ggplot object(s) or grid.arrange output
+ggplot object with histogram
 }
 \description{
-WORK IN PROGRESS
+Plot the distribution of MIC of A in a histogram, split on B.
 }
 \examples{
 MIC_test <- data.frame(d1 = c(16, 16, 128, 128, 32, 16, 128, 1, 64, 1),

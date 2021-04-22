@@ -9,7 +9,7 @@
 #' @param selected_ab optional argument, character vector containing which antibiotics should be included
 #' @param t_or_effect plot the effect size or the T value, character `"t"` or `"effect"`
 #'
-#' @return ggplot object
+#' @return ggplot object with heatmap
 #' @export
 #'
 #' @examples
@@ -114,13 +114,13 @@ plot_heatmap_CE <- function(t_result, sign_criterium = 1, selected_ab = NULL,
 
 #' Plot MIC Distribution
 #'
-#' WORK IN PROGRESS
+#' Plot the distribution of MIC of A in a histogram, split on B.
 #'
 #' @param MIC_range range of x-axis (default NULL)
 #' @param colors set of two colors for the high and low MIC groups
 #' @inheritParams collateral_t_test
 #'
-#' @return (list with) ggplot object(s) or grid.arrange output
+#' @return ggplot object with histogram
 #' @export
 #'
 #' @examples

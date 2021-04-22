@@ -29,7 +29,8 @@ overwritten by \code{crit_type = "median"})}
 \code{?stats::p.adjust.methods})}
 }
 \value{
-data frame with results per antibiotic combination
+Data frame with results for every antibiotic combination, containing
+the T-value, p-value and corrected p-value (q).
 }
 \description{
 Wrapper for \code{collateral_t_test()}, which quantifies and tests collateral
@@ -38,7 +39,7 @@ effects in a set of MICs for more than two antibiotics.
 \examples{
 
 MIC_test <- data.frame(d1 = c(16, 16, 128, 128, 32, 16, 128, 1, 64, 1),
-d2 = c(32, 32, 16, 32, 8, 32, 8, 8, 8, 8),
-d3 = c(8, 64, 64, 64, 16, 6, 16, 8, 8, 8))
+                       d2 = c(32, 32, 16, 32, 8, 32, 8, 8, 8, 8),
+                       d3 = c(8, 64, 64, 64, 16, 6, 16, 8, 8, 8))
 collateral_mult_test(MIC_test)
 }
