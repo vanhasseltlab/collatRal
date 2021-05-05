@@ -17,7 +17,8 @@ plot_histogram_CE(
 \arguments{
 \item{A}{Untransformed MIC values of antibiotic A, numeric vector}
 
-\item{B}{Untransformed MIC values of antibiotic B, numeric vector, same length as A}
+\item{B}{Untransformed MIC values of antibiotic B, numeric vector, same
+length as A}
 
 \item{effect_type}{type of collateral effect to be evaluated, string:
 \code{"both"}, \code{"CR"} or \code{"CS"}}

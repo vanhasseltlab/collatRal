@@ -4,7 +4,8 @@
 #' effect. The quantified effect is the effect of B on A.
 #'
 #' @param A Untransformed MIC values of antibiotic A, numeric vector
-#' @param B Untransformed MIC values of antibiotic B, numeric vector, same length as A
+#' @param B Untransformed MIC values of antibiotic B, numeric vector, same
+#' length as A
 #' @param effect_type type of collateral effect to be evaluated, string:
 #' `"both"`, `"CR"` or `"CS"`
 #' @param crit_type type of dichotomization criterion, string: `"quant"`,

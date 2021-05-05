@@ -6,8 +6,10 @@
 #' @param t_result T test results from wrapper function (to be developed)
 #' @param sign_criterium the criterium for which of results are considered
 #' significant, numeric value in (0, 1].
-#' @param selected_ab optional argument, character vector containing which antibiotics should be included
-#' @param t_or_effect plot the effect size or the T value, character `"t"` or `"effect"`
+#' @param selected_ab optional argument, character vector containing which
+#' antibiotics should be included
+#' @param t_or_effect plot the effect size or the T value, character `"t"` or
+#' `"effect"`
 #'
 #' @return ggplot object with heatmap
 #' @export
@@ -19,7 +21,6 @@
 #' MIC_test_result <- collateral_mult_test(MIC_test)
 #' plot_heatmap_CE(MIC_test_result)
 #'
-#TO-DO: reduce to base and ggplot, remove some arguments, fit to wrapper function output
 plot_heatmap_CE <- function(t_result, sign_criterium = 1, selected_ab = NULL,
                             t_or_effect = "effect") {
 
@@ -29,7 +30,7 @@ plot_heatmap_CE <- function(t_result, sign_criterium = 1, selected_ab = NULL,
     t_result$effect_size <- t_result$t
     effect_label <- "T-value"
   } else {
-    effect_label <- expression(log[2]*"(FC)")
+    effect_label <- expression(log[2]*" FC")
   }
 
   #Set all non significant finding to zero (white in plot)
@@ -153,7 +154,7 @@ plot_histogram_CE <- function(A, B, effect_type = "both", crit_type = "median",
 
 
   plot_data$Condition <- as.factor(ifelse(plot_data$B >= d,
-    paste0(antibiotics[1],"|", antibiotics[2],"	 \u2265 ", round(d, 2)),
+    paste0(antibiotics[1],"|", antibiotics[2]," \u2265 ", round(d, 2)),
     paste0(antibiotics[1],"|", antibiotics[2]," < ", round(d, 2))))
 
   means <- data.frame(Means = sort(unique(plot_data$Condition)),
@@ -203,8 +204,8 @@ plot_histogram_CE <- function(A, B, effect_type = "both", crit_type = "median",
     ggplot2::guides(
       fill = ggplot2::guide_legend(override.aes = list(linetype = 0), order = 1,
                                    title = NULL),
-      color = ggplot2::guide_legend(order = 2, title = NULL,
-                                     label.theme = ggplot2::element_text(size = 12))
+      color = ggplot2::guide_legend(order = 2, title = NULL, label.theme =
+                                      ggplot2::element_text(size = 12))
       )
 
   return(histogram)

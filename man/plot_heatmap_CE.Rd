@@ -17,9 +17,11 @@ plot_heatmap_CE(
 \item{sign_criterium}{the criterium for which of results are considered
 significant, numeric value in (0, 1].}
 
-\item{selected_ab}{optional argument, character vector containing which antibiotics should be included}
+\item{selected_ab}{optional argument, character vector containing which
+antibiotics should be included}
 
-\item{t_or_effect}{plot the effect size or the T value, character \code{"t"} or \code{"effect"}}
+\item{t_or_effect}{plot the effect size or the T value, character \code{"t"} or
+\code{"effect"}}
 }
 \value{
 ggplot object with heatmap
