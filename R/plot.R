@@ -22,7 +22,7 @@
 #' plot_heatmap_CE(MIC_test_result)
 #'
 plot_heatmap_CE <- function(t_result, sign_criterium = 1, selected_ab = NULL,
-                            t_or_effect = "effect") {
+                            t_or_effect = "effect", effect_size_cut_off = 0) {
 
   t_result[is.na(t_result$t), c("effect_size", "t")] <- 0
 
@@ -40,6 +40,10 @@ plot_heatmap_CE <- function(t_result, sign_criterium = 1, selected_ab = NULL,
     not_significant <- t_result$q > sign_criterium
   }
   t_result$effect_size[not_significant] <- 0
+
+  if (effect_size_cut_off > 0) {
+    t_result$effect_size[abs(t_result$effect_size) < effect_size_cut_off] <- 0
+  }
 
 
   # find reciprocal AB combinations
@@ -66,13 +70,22 @@ plot_heatmap_CE <- function(t_result, sign_criterium = 1, selected_ab = NULL,
   }
 
   #define plot colors, limits and labels
-  blues <- c("#182450", "#243676", "#283C82", "#2F4286", "#36498A", "#3E508E",
-             "#455693", "#4D5D97", "#54649B", "#5B6BA0", "#6371A4", "#6A78A8",
-             "#727FAD", "#8893BA", "#9EA7C6", "#CBCFE0")
-  oranges <- c("#F54C00", "#F55208", "#F55811", "#F65E1A", "#F66423", "#F66A2B",
-               "#F77134", "#F7773D", "#F77D46", "#F8834F", "#F88957", "#F99C72",
-               "#FAAE8C", "#FBC1A7", "#FCD3C1", "#FDE6DB")
   limits <- c(-1, 1) * max(abs(t_result$effect_size))
+  create_color_scale <- function(limits, cut_off = effect_size_cut_off) {
+    if (cut_off == 0) {
+      set_values <- c(limits[1], -0.5, 0.5, limits[2])
+      scaled_values <- (limits[2] + set_values)/2/limits[2]
+      colours <- c("#243676", "white", "#F54C00")
+    } else {
+      val <- cut_off * seq(0, 0.0001, length.out = 3)
+      set_values <- c(limits[1], -(cut_off + rev(val)), cut_off + val, limits[2])
+      scaled_values <- (limits[2] + set_values)/2/limits[2]
+      colours <- c("#243676", rep("white", 3), "#F54C00")
+    }
+
+    return(list(scaled_values, colours))
+  }
+  color_values <- create_color_scale(limits)
   draw_grid <- function(x) {
     seq(1.5, length(levels(x)) - 0.5, 1)
   }
@@ -93,8 +106,8 @@ plot_heatmap_CE <- function(t_result, sign_criterium = 1, selected_ab = NULL,
     ggplot2::scale_y_discrete(limits = rev, drop = FALSE,
                               expand = ggplot2::expansion(mult = 0,
                                                           add = rep(0.5, 2))) +
-    ggplot2::scale_fill_gradientn(colours = c(blues, "white", rev(oranges)),
-                                  limits = limits) +
+    ggplot2::scale_fill_gradientn(colours = color_values[[2]],
+                                  values = color_values[[1]], limits = limits) +
     ggplot2::scale_shape_manual(values = c("", "\u2194"), drop = FALSE) +
     ggplot2::labs(x = "Splitting antibiotic (B)",
                   y = paste0("Testing antibiotic (A)"),
@@ -112,8 +125,9 @@ plot_heatmap_CE <- function(t_result, sign_criterium = 1, selected_ab = NULL,
                    axis.title = ggplot2::element_text(size = 14),
                    axis.text.x = ggplot2::element_text(angle = 90, hjust = 1,
                                                        vjust = 0.5),
-                   aspect.ratio = 1) #+
-    # ggplot2::facet_grid(class_A ~ class_B, drop = TRUE, scales = "free")
+                   aspect.ratio = 1) +
+    guides(fill = guide_colorbar(order = 1), shape = guide_legend(order = 2))#+
+  # ggplot2::facet_grid(class_A ~ class_B, drop = TRUE, scales = "free")
 
   return(plot_)
 }
