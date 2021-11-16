@@ -49,12 +49,15 @@ plot_heatmap_CE <- function(t_result, sign_criterium = 1, selected_ab = NULL,
     comb <- combinations[i, ]
     ind_comb <- t_result$A %in% comb & t_result$B %in% comb
     df_comb <- t_result[ind_comb, ]
-    if (all(df_comb$effect_size > 0) | all(df_comb$effect_size < 0)){
+    if (length(df_comb$effect_size) == 2 & (all(df_comb$effect_size > 0) | all(df_comb$effect_size < 0))){
       t_result[ind_comb, "reciprocal"] <- "reciprocal"
     }
   }
   t_result$reciprocal <- factor(t_result$reciprocal,
                                 levels = c("one-directional", "reciprocal"))
+  all_abs <- sort(unique(c(t_result$A, t_result$B)))
+  t_result$A <- factor(t_result$A, levels = all_abs)
+  t_result$B <- factor(t_result$B, levels = all_abs)
 
   #Use only antibiotics from selected_ab argument
   if (!is.null(selected_ab)) {
@@ -71,7 +74,7 @@ plot_heatmap_CE <- function(t_result, sign_criterium = 1, selected_ab = NULL,
                "#FAAE8C", "#FBC1A7", "#FCD3C1", "#FDE6DB")
   limits <- c(-1, 1) * max(abs(t_result$effect_size))
   draw_grid <- function(x) {
-    seq(1.5, length(unique(x)) - 0.5, 1)
+    seq(1.5, length(levels(x)) - 0.5, 1)
   }
 
   # Define variables in environment to circumvent building errors
@@ -84,9 +87,11 @@ plot_heatmap_CE <- function(t_result, sign_criterium = 1, selected_ab = NULL,
     ggplot2::geom_point(ggplot2::aes(shape = reciprocal), size = 5,
                         colour = "white") +
     # Scale aesthetics
-    ggplot2::scale_x_discrete(expand = ggplot2::expansion(mult = 0,
+    ggplot2::scale_x_discrete(drop = FALSE,
+                              expand = ggplot2::expansion(mult = 0,
                                                           add = rep(0.5, 2))) +
-    ggplot2::scale_y_discrete(expand = ggplot2::expansion(mult = 0,
+    ggplot2::scale_y_discrete(limits = rev, drop = FALSE,
+                              expand = ggplot2::expansion(mult = 0,
                                                           add = rep(0.5, 2))) +
     ggplot2::scale_fill_gradientn(colours = c(blues, "white", rev(oranges)),
                                   limits = limits) +
@@ -97,7 +102,7 @@ plot_heatmap_CE <- function(t_result, sign_criterium = 1, selected_ab = NULL,
     # Create custom grid
     ggplot2::geom_vline(xintercept = draw_grid(t_result$A), colour = "grey60") +
     ggplot2::geom_hline(yintercept = draw_grid(t_result$B), colour = "grey60") +
-    ggplot2::geom_abline(slope = 1, intercept = 0, colour = "grey60") +
+    ggplot2::geom_abline(slope = -1, intercept = length(unique(t_result$A)) + 1, colour = "grey60") +
     # Change theme
     ggplot2::theme_bw() +
     ggplot2::theme(panel.grid.major = ggplot2::element_blank(),
@@ -119,6 +124,7 @@ plot_heatmap_CE <- function(t_result, sign_criterium = 1, selected_ab = NULL,
 #'
 #' @param MIC_range range of x-axis (default NULL)
 #' @param colors set of two colors for the high and low MIC groups
+#' @param antibiotics names of the antibiotics, if these are not part of A and B
 #' @inheritParams collateral_t_test
 #'
 #' @return ggplot object with histogram
@@ -134,19 +140,26 @@ plot_heatmap_CE <- function(t_result, sign_criterium = 1, selected_ab = NULL,
 #'
 plot_histogram_CE <- function(A, B, effect_type = "both", crit_type = "median",
                               criterium = NULL, MIC_range = NULL,
-                              colors = c("#BFC6B8", "#4A5242")) {
+                              colors = c("#BFC6B8", "#4A5242"),
+                              antibiotics = NULL) {
   # Perform t-test to determine tau and the means
   t_result <- collateral_t_test(A, B, effect_type = effect_type,
                                 crit_type = crit_type, criterium = criterium,
                                 warn = FALSE)
   d <- t_result$tau
 
-  antibiotics <- c(deparse(substitute(A)), deparse(substitute(B)))
-  # Remove data.frame name if input includes '$' sign.
-  antibiotics <- ifelse(grepl("$", antibiotics, fixed = T),
-                        gsub(".*\\$","",antibiotics), antibiotics)
+  if (is.null(antibiotics)) {
+    antibiotics <- c(deparse(substitute(A)), deparse(substitute(B)))
+    # Remove data.frame name if input includes '$' sign.
+    antibiotics <- ifelse(grepl("$", antibiotics, fixed = T),
+                          gsub(".*\\$","",antibiotics), antibiotics)
+  }
 
-  ind_na <- is.na(A) | is.na(B)
+  # antibiotics <- ifelse(grepl("[", antibiotics, fixed = T),
+  #                       gsub(".*\\[","",antibiotics), antibiotics)
+
+
+  ind_na <- is.na(A) | is.na(B) | A == 0 | B == 0
   A <- A[!ind_na]
   B <- B[!ind_na]
 
@@ -170,7 +183,7 @@ plot_histogram_CE <- function(A, B, effect_type = "both", crit_type = "median",
   labeling <- c(bquote(hat(mu)[.(as.character(means$Means[1]))]),
                 bquote(hat(mu)[.(antibiotics[1])*"|"*
                                  .(paste0(antibiotics[2], " ")) >=
-                                 .(paste0(" ", d))]))
+                                 .(paste0(" ", round(d, 2)))]))
 
   histogram <- ggplot2::ggplot(plot_data,
                                ggplot2::aes(x = A, y = ..count..,

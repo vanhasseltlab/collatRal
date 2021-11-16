@@ -26,27 +26,34 @@ remove_duplicate_MICs <- function(MIC_df, key = NULL) {
     }
   }
 
+  #remove any NA MIC values
+  MIC_df <- MIC_df[!is.na(MIC_df$MIC), ]
+
+  MIC_df$measurement_sign <- ifelse(MIC_df$measurement_sign %in%
+                                      c(">", ">=", "=>"), ">", "<=")
+
   # two unique measurements for the same key will be summarized:
   #   max if ">" and mean if "<="
   if (length(unique(MIC_df$key)) == nrow(MIC_df)) {
     return(MIC_df)
   }
-  find_unique <- ave(MIC_df$key, MIC_df$key, FUN = length) == 1
+  find_unique <- stats::ave(MIC_df$key, MIC_df$key, FUN = length) == 1
 
   # add unique MICs to final data frame
   new_MIC <- MIC_df[find_unique, ]
 
   search_keys <- unique(MIC_df$key[!find_unique])
-  # add rows for keys with duplicates
 
-  MIC_reduced <- as.data.frame(matrix(NA, nrow = length(search_keys)),
+  # add rows for keys with duplicates
+  MIC_reduced <- as.data.frame(matrix(NA, nrow = length(search_keys),
+                                      ncol = ncol(new_MIC)),
                                row.names = search_keys)
+  colnames(MIC_reduced) <- colnames(new_MIC)
+
   for (i in search_keys) {
     cat("\r", "At (%): ", round(which(search_keys == i)/length(search_keys)*100, 2), ", key = ", i)
     dat <- MIC_df[MIC_df$key == i, ]
-    if (nrow(dat) == 1) {
-      MIC_reduced[i, ] <- dat
-    }
+
     if (nrow(dat) > 1) {
       if (dat$measurement_sign[1] == dat$measurement_sign[2]) {
         if(dat$measurement_sign[1] == "<=") {
@@ -59,10 +66,10 @@ remove_duplicate_MICs <- function(MIC_df, key = NULL) {
         MIC_i <- mean(dat$MIC[dat$measurement_sign == "<="])
         dat$measurement_sign <- "<="
       }
-      dat <- dat[1, ]
       dat$MIC <- MIC_i
-      new_MIC <- rbind(new_MIC, dat)
+      MIC_reduced[i, ] <- dat[1, ]
     }
   }
+  new_MIC <- rbind(new_MIC, MIC_reduced)
   return(new_MIC)
 }

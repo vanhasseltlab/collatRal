@@ -78,8 +78,10 @@ collateral_t_test <- function(A, B, effect_type = "both", crit_type = "median",
               "test! Returning list with limited information. Try different",
               "dichotomization criterium for test.")
     }
-    return(list(A = A, B = B, tau = tau, data = list(`A|B = high` = A_Bhigh,
-                                                     `A|B = low` = A_Blow)))
+    return(list(A = A, B = B, tau = tau,
+                data = list(`A|B = high` = A_Bhigh, `A|B = low` = A_Blow),
+                estimate = c(mean(A_Bhigh), mean(A_Blow)),
+                log2_FC = mean(A_Bhigh) - mean(A_Blow)))
   }
 
   #Perform t.test
