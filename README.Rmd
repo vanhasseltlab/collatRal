@@ -18,11 +18,15 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of collatRal is to test collateral effects in clinical surveillance data, with antibiotic MIC measurements for a set of strains. The package includes a main test functions, a wrapper for performing the test for multiple combinations of antibiotics and two plot functions.
+The goal of collatRal is to test collateral effects in clinical surveillance data, with antibiotic MIC measurements for a set of strains. The package currently includes a main test functions, a wrapper for performing the test for multiple combinations of antibiotics and two plot functions.
 
 ## Installation
 
-Currently, collatRal is not available for installation yet, except for installation directly from the build (.zip or .tar.gz).
+The package can be installed directly from github using `devtools`. Run the following line in R:
+```{r installation, echo = TRUE, eval = FALSE}
+devtools::install_github("vanhasseltlab/collatRal")
+```
+
 
 ## Example
 

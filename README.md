@@ -14,8 +14,12 @@ plot functions.
 
 ## Installation
 
-Currently, collatRal is not available for installation yet, except for
-installation directly from the build (.zip or .tar.gz).
+The package can be installed directly from github using `devtools`. Run
+the following line in R:
+
+``` r
+devtools::install_github("vanhasseltlab/collatRal")
+```
 
 ## Example
 

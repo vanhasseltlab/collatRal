@@ -11,7 +11,8 @@ plot_histogram_CE(
   crit_type = "median",
   criterium = NULL,
   MIC_range = NULL,
-  colors = c("#BFC6B8", "#4A5242")
+  colors = c("#BFC6B8", "#4A5242"),
+  antibiotics = NULL
 )
 }
 \arguments{
@@ -32,6 +33,8 @@ overwritten by \code{crit_type = "median"})}
 \item{MIC_range}{range of x-axis (default NULL)}
 
 \item{colors}{set of two colors for the high and low MIC groups}
+
+\item{antibiotics}{names of the antibiotics, if these are not part of A and B}
 }
 \value{
 ggplot object with histogram
